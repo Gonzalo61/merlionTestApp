@@ -2,7 +2,13 @@ package com.merliontechs.web.rest;
 
 import com.merliontechs.domain.Sales;
 import com.merliontechs.repository.SalesRepository;
+import com.merliontechs.service.dto.SalesDTO;
 import com.merliontechs.web.rest.errors.BadRequestAlertException;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -10,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +28,7 @@ import java.util.Optional;
 /**
  * REST controller for managing {@link com.merliontechs.domain.Sales}.
  */
+@Controller
 @RestController
 @RequestMapping("/api")
 @Transactional
@@ -115,4 +123,33 @@ public class SalesResource {
         salesRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
+    
+    @GetMapping("/salesPerDayDeliv")
+    public List<SalesDTO> getNumSalesDeliv() {
+        log.debug("REST request to get number of sales per day in delivered");
+        return salesRepository.getNumSalesDeliv();
+    }
+    
+    @GetMapping("/salesPerDay")
+    public List<SalesDTO> getNumSales() {
+        log.debug("REST request to get number of sales per day");
+        return salesRepository.getNumSales();
+    }
+    
+
+    Pageable topFive = PageRequest.of(0, 5);
+    
+    @GetMapping("/topProducts")
+    public List<SalesDTO> getTopProduct(Pageable pageable) {
+        log.debug("REST request to get top products");
+        return salesRepository.getTopProduct(topFive);
+    }
+    
+    @GetMapping("/topProfitProducts")
+    public List<SalesDTO> getTopProductsProfit(Pageable pageable) {
+        log.debug("REST request to get top products");
+        return salesRepository.getTopProductsProfit(topFive);
+    }
+    
+    
 }
